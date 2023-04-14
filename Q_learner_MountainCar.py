@@ -52,10 +52,13 @@ class Q_Learner(object):
         else:  # Choose a random action
             return np.random.choice([a for a in range(self.action_shape)])
 
-    def learn(self, obs, action, reward, next_obs):
+    def learn(self, obs, action, reward, next_obs, next_action):
         discretized_obs = self.discretize(obs)
         discretized_next_obs = self.discretize(next_obs)
-        td_target = reward + self.gamma * np.max(self.Q[discretized_next_obs])
+
+        # Change the nature of Q-Learning which maximizes the possible reward
+        # Replace with an on-policy where it will be guided by a policy
+        td_target = reward + self.gamma * self.Q[discretized_next_obs][next_action]
         td_error = td_target - self.Q[discretized_obs][action]
         self.Q[discretized_obs][action] += self.alpha * td_error
 
@@ -68,7 +71,11 @@ def train(agent, env):
         while not done:
             action = agent.get_action(obs)
             next_obs, reward, done, info, _ = env.step(action)
-            agent.learn(obs, action, reward, next_obs)
+
+            # Implementation of on-policy algorithm
+            # Obtain the next suitable action using the next observation rather than taking action with highest reward
+            next_action = agent.get_action(next_obs)
+            agent.learn(obs, action, reward, next_obs, next_action)
             obs = next_obs
             total_reward += reward
         if total_reward > best_reward:
