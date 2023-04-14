@@ -42,7 +42,12 @@ class Q_Learner(object):
         # Epsilon-Greedy action selection
         if self.epsilon > EPSILON_MIN:
             self.epsilon -= EPSILON_DECAY
-        if np.random.random() > self.epsilon:
+
+        # Implemented Epsilon Greedy Policy 
+        # Takes exploratory action with probability of epsilon
+        # Takes a greedy action with probability of 1 - epsilon
+        # Goal: Ensure all action spaces are explored
+        if np.random.random() < (1 - self.epsilon):
             return np.argmax(self.Q[discretized_obs])
         else:  # Choose a random action
             return np.random.choice([a for a in range(self.action_shape)])
