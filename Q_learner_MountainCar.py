@@ -17,6 +17,7 @@ EPSILON_DECAY = 500 * EPSILON_MIN / max_num_steps
 ALPHA = 0.05  # Learning rate
 GAMMA = 0.98  # Discount factor
 NUM_DISCRETE_BINS = 30  # Number of bins to Discretize each observation dim
+rewards = [] # Variable for "true learning" condition and plotting function
 
 
 class Q_Learner(object):
@@ -64,6 +65,8 @@ class Q_Learner(object):
 
 def train(agent, env):
     best_reward = -float('inf')
+    rewards_streak = 0
+
     for episode in range(MAX_NUM_EPISODES):
         done = False
         obs, _ = env.reset()
@@ -82,6 +85,20 @@ def train(agent, env):
             best_reward = total_reward
         print("Episode#:{} reward:{} best_reward:{} eps:{}".format(episode,
                                      total_reward, best_reward, agent.epsilon))
+   
+        # Added "learning" condition
+        # Checks whether the reward is unchanged after n number of iterations
+        rewards.append(best_reward)
+        previous_episode = episode - 1
+        if (episode != 0) and ((rewards[episode]) == (rewards[previous_episode])):
+            rewards_streak += 1
+            if (rewards_streak == 3000):
+                print("Best Reward: {}".format(best_reward))
+                break
+        elif ((rewards[episode]) != (rewards[previous_episode])):
+            rewards_streak = 0
+
+
     # Return the trained policy
     return np.argmax(agent.Q, axis=2)
 
@@ -102,9 +119,7 @@ if __name__ == "__main__":
     env = gym.make('MountainCar-v0')
     agent = Q_Learner(env)
     learned_policy = train(agent, env)
-    # Use the Gym Monitor wrapper to evalaute the agent and record video
-    gym_monitor_path = "./gym_monitor_output"
-    env = gym.wrappers.Monitor(env, gym_monitor_path, force=True)
+
     for _ in range(1000):
         test(agent, env, learned_policy)
     env.close()
