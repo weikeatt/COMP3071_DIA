@@ -8,6 +8,7 @@ Source code: https://github.com/PacktPublishing/Hands-On-Intelligent-Agents-with
 """
 import gym
 import numpy as np
+import matplotlib.pyplot as plt
 
 MAX_NUM_EPISODES = 50000
 STEPS_PER_EPISODE = 200 #  This is specific to MountainCar. May change with env
@@ -97,6 +98,12 @@ def train(agent, env):
                 break
         elif ((rewards[episode]) != (rewards[previous_episode])):
             rewards_streak = 0
+
+    # Plotting function
+    plt.plot(range(episode + 1), rewards)
+    plt.xlabel("Number of Episodes")
+    plt.ylabel("Rewards")
+    plt.show()
 
     # Return the trained policy
     return np.argmax(agent.Q, axis=2)
