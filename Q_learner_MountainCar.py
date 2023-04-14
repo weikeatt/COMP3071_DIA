@@ -98,21 +98,8 @@ def train(agent, env):
         elif ((rewards[episode]) != (rewards[previous_episode])):
             rewards_streak = 0
 
-
     # Return the trained policy
     return np.argmax(agent.Q, axis=2)
-
-
-def test(agent, env, policy):
-    done = False
-    obs, _ = env.reset()
-    total_reward = 0.0
-    while not done:
-        action = policy[agent.discretize(obs)]
-        next_obs, reward, done, info, _ = env.step(action)
-        obs = next_obs
-        total_reward += reward
-    return total_reward
 
 
 if __name__ == "__main__":
@@ -120,6 +107,4 @@ if __name__ == "__main__":
     agent = Q_Learner(env)
     learned_policy = train(agent, env)
 
-    for _ in range(1000):
-        test(agent, env, learned_policy)
     env.close()
