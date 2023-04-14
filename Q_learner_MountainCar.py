@@ -4,6 +4,7 @@ q_learner.py
 An easy-to-follow script to train, test and evaluate a Q-learning agent on the Mountain Car
 problem using the OpenAI Gym. |Praveen Palanisamy
 # Chapter 5, Hands-on Intelligent Agents with OpenAI Gym, 2018
+Source code: https://github.com/PacktPublishing/Hands-On-Intelligent-Agents-with-OpenAI-Gym/blob/master/ch5/Q_learner_MountainCar.py
 """
 import gym
 import numpy as np
@@ -28,8 +29,7 @@ class Q_Learner(object):
         self.action_shape = env.action_space.n
         # Create a multi-dimensional array (aka. Table) to represent the
         # Q-values
-        self.Q = np.zeros((self.obs_bins + 1, self.obs_bins + 1,
-                           self.action_shape))  # (51 x 51 x 3)
+        self.Q = np.zeros((self.obs_bins + 1, self.obs_bins + 1, self.action_shape))  # (51 x 51 x 3)
         self.alpha = ALPHA  # Learning rate
         self.gamma = GAMMA  # Discount factor
         self.epsilon = 1.0
@@ -58,11 +58,11 @@ def train(agent, env):
     best_reward = -float('inf')
     for episode in range(MAX_NUM_EPISODES):
         done = False
-        obs = env.reset()
+        obs, _ = env.reset()
         total_reward = 0.0
         while not done:
             action = agent.get_action(obs)
-            next_obs, reward, done, info = env.step(action)
+            next_obs, reward, done, info, _ = env.step(action)
             agent.learn(obs, action, reward, next_obs)
             obs = next_obs
             total_reward += reward
@@ -76,11 +76,11 @@ def train(agent, env):
 
 def test(agent, env, policy):
     done = False
-    obs = env.reset()
+    obs, _ = env.reset()
     total_reward = 0.0
     while not done:
         action = policy[agent.discretize(obs)]
-        next_obs, reward, done, info = env.step(action)
+        next_obs, reward, done, info, _ = env.step(action)
         obs = next_obs
         total_reward += reward
     return total_reward
