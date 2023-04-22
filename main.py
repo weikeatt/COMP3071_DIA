@@ -15,7 +15,7 @@ STEPS_PER_EPISODE = 200 #  This is specific to MountainCar. May change with env
 EPSILON_MIN = 0.005
 max_num_steps = MAX_NUM_EPISODES * STEPS_PER_EPISODE
 EPSILON_DECAY = 500 * EPSILON_MIN / max_num_steps
-ALPHA = 0.05  # Learning rate
+ALPHA = 0.08  # Learning rate
 GAMMA = 0.98  # Discount factor
 NUM_DISCRETE_BINS = 30  # Number of bins to Discretize each observation dim
 rewards = [] # Variable for "true learning" condition and plotting function
@@ -45,7 +45,6 @@ class Q_Learner(object):
         if self.epsilon > EPSILON_MIN:
             self.epsilon -= EPSILON_DECAY
 
-        # Implemented Epsilon Greedy Policy 
         # Takes exploratory action with probability of epsilon
         # Takes a greedy action with probability of 1 - epsilon
         # Goal: Ensure all action spaces are explored
@@ -87,13 +86,13 @@ def train(agent, env):
         print("Episode#:{} reward:{} best_reward:{} eps:{}".format(episode,
                                      total_reward, best_reward, agent.epsilon))
    
-        # Added "learning" condition
+        # Added " true learning" condition
         # Checks whether the reward is unchanged after n number of iterations
         rewards.append(best_reward)
         previous_episode = episode - 1
         if (episode != 0) and ((rewards[episode]) == (rewards[previous_episode])):
             rewards_streak += 1
-            if (rewards_streak == 3000):
+            if (rewards_streak == 10000):
                 print("Best Reward: {}".format(best_reward))
                 break
         elif ((rewards[episode]) != (rewards[previous_episode])):
@@ -115,3 +114,8 @@ if __name__ == "__main__":
     learned_policy = train(agent, env)
 
     env.close()
+
+
+
+
+    
